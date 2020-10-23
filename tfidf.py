@@ -4,28 +4,28 @@ import pandas as pd
 import numpy as np
 import pickle
 ''' Function to create tf-idr for all the documents '''
-def tf_idf_preprocess():
+def load(doc):
+    file = open(doc,'rb')
+    df = pickle.load(file)
+    file.close()
+    return df
+
+def tf_idf_preprocess(processed_data, inverted_index, length):
     no_of_doc = 34886
 
     # loading term frequencies
-    file = open("processed_data.obj",'rb')
-    df = pickle.load(file)
-    file.close()
-    df.rename( columns={'Unnamed: 0':'Document'}, inplace=True)
-    d_df= df.to_dict()
-    d_df=d_df['Length']
+    df = load(processed_data)
+
+    d_df = df.to_dict()
+    d_df =d_df[length]
     
 
     # average length of all documents
-    avg_length= df["Length"].mean() 
+    avg_length= df[length].mean() 
     
     #loading indexing list
-    file = open("inverted_index.obj",'rb')
-    ii_df = pickle.load(file)
-    file.close()
+    ii_df = load(inverted_index)
 
-    ii_df.rename( columns={'Unnamed: 0':'Words'}, inplace=True )
-    ii_df.set_index('Words',inplace=True)
     ii_df= ii_df.to_dict()
     ii_df=ii_df['PostingList'] 
 
@@ -38,23 +38,31 @@ def tf_idf_preprocess():
     #calculating tf-idf
     for doc in range(0,no_of_doc):
         doc_dict={}
-        for key,value in eval(df['Frequency'][doc]).items():
+        for key,value in df['Frequency'][doc].items():
             if key=='nan' or key=='null':
              continue;
             tf = (value/d_df[doc]) 
             idf = np.log(no_of_doc/(ii_df[key]))
             # doc_dict[key]=tf*idf
-            doc_dict[key] = idf*( tf*(k+1) )/(k*(1- b + b*(df["Length"][doc]/avg_length))) * 100
+            doc_dict[key] = idf*( tf*(k+1) )/(k*(1- b + b*(df[length][doc]/avg_length))) * 100
         tf_idf_dict[doc]=doc_dict
 
     print("--- %s seconds ---" % (time.time() - start_time))
     return tf_idf_dict  
 
-tf_idf_dict = tf_idf_preprocess()
-
+tf_idf_dict = tf_idf_preprocess("processed_data.obj", "inverted_index.obj", "Length")
 filehandler = open("tf-idf.obj","wb")
 pickle.dump(tf_idf_dict,filehandler)
 filehandler.close()
+
+tf_idf_title_dict = tf_idf_preprocess("processed_data_title.obj", "inverted_index_title.obj", "TitleLength")
+filehandler = open("tf-idf_title.obj","wb")
+pickle.dump(tf_idf_title_dict,filehandler)
+filehandler.close()
+
+# print(tf_idf_dict)
+# print(tf_idf_title_dict)
+
 
 
 
