@@ -10,7 +10,12 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from collections import defaultdict
 import heapq
-from tfidf import load
+
+def load(doc):
+    file = open(doc,'rb')
+    df = pickle.load(file)
+    file.close()
+    return df
 
 def query_processing(query):
 
