@@ -8,6 +8,7 @@ nltk.download('stopwords')
 from nltk.tokenize import WhitespaceTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+import pickle
 
 
 class ProcessData:
@@ -23,7 +24,10 @@ class ProcessData:
         
     def read(self):
         df = pd.read_csv('wiki_movie_plots_deduped.csv')
-        return df 
+        filehandler = open("movie_plot.obj","wb")
+        pickle.dump(df,filehandler)
+        filehandler.close()
+        return df
     
     def LowerCase(self, df):
         
@@ -143,17 +147,34 @@ class ProcessData:
         return Inverted_Index
     
     def main(self):
-        df = self.read()
-        df = self.LowerCase(df)
-        df = self.Tokenizer(df)
-        df = self.RemoveStopWords(df)
-        df = self.Stemmer(df)
-        df = self.TermFrequency(df)
-        df.to_csv(r'Processed_Data.csv')
-        # df = pd.read_csv('Processed_Data.csv')
-        Inverted_Index = self.Vocabulary(df)
-        Inverted_Index = self.InvertedIndex(Inverted_Index, df)
-        Inverted_Index.to_csv(r'Inverted_Index.csv')
+        # df = self.read()
+        # df = self.LowerCase(df)
+        # df = self.Tokenizer(df)
+        # df = self.RemoveStopWords(df)
+        # df = self.Stemmer(df)
+        # df = self.TermFrequency(df)
+        # df1 = df[['Length' , 'Frequency' ,'Unnamed: 0','TokensTitle','TokensGenre']]
+        
+        # # storing inveted processed data as pickel
+        # filehandler = open("processed_data.obj","wb")
+        # pickle.dump(df1,filehandler)
+        # filehandler.close()
+
+        # # df.to_csv(r'Processed_Data.csv')
+
+        # Inverted_Index = self.Vocabulary(df)
+        # Inverted_Index = self.InvertedIndex(Inverted_Index, df)
+        
+        # #storing inverted index as pickel
+        # filehandler = open("inverted_index.obj","wb")
+        # pickle.dump(Inverted_Index,filehandler)
+        # filehandler.close()
+        # # Inverted_Index.to_csv(r'Inverted_Index.csv')
+
+        df= pd.read_csv('wiki_movie_plots_deduped.csv')
+        filehandler = open("movie_data.obj","wb")
+        pickle.dump(df,filehandler)
+        filehandler.close()
         
 
 Data = ProcessData()

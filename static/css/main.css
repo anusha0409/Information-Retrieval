@@ -45,13 +45,16 @@ body, html {
   justify-content: center;
   border-radius: var(--border-radius);
   margin-right: 12px;
+  background-color: #9ef0e1;
   box-shadow: 
     -2px -2px 6px rgba(#fff, .6),
     2px 2px 12px #c8d8e7;
+ 
     
 }
 .Icon:svg{
-  transform:translate(-1px, -1px);    
+  transform:translate(-1px, -1px); 
+     
 }
 
 label {
@@ -116,9 +119,9 @@ input:focus {
 .movie-card{
     color: black;
     text-align: left;
-    background-color:#80a6bf;
+    background-color:#9ef0e1;
     border-radius: var(--border-radius);
     width: 85%;
     padding :16px; 
-    opacity :0.9
+    opacity :0.87
 }
