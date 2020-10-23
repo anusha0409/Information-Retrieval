@@ -1,0 +1,3 @@
+# .obj and __pycache
+tf-idf.obj
+*.pyc
