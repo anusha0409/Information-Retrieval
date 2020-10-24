@@ -189,13 +189,13 @@ class ProcessData:
         print("--- %s seconds ---" % (time.time() - self.start_time))
         return Inverted_Index
 
-    def Write(file, df):
+    def Write(self, file, df):
         '''
         Stores the dataframes as pickle files.
         Takes filename and dataframe as parameter.
         '''
         filehandler = open(file,"wb")
-        pickle.dump(df1,filehandler)
+        pickle.dump(df,filehandler)
         filehandler.close()
     
     def main(self):
@@ -208,24 +208,24 @@ class ProcessData:
         # Stores only the required columns from the processed dataframe.
         df1 = df[['Length' , 'Frequency']]
         # Storing inverted processed data as pickle
-        Write("processed_data.obj", df1)
+        self.Write("processed_data.obj", df1)
         
         df_Title = df[['TokensTitle', 'TitleLength']]
         df_Title = self.Stemmer(df_Title, 'TokensTitle')
         df_Title = self.TermFrequency(df_Title)
         # Storing inverted processed data as pickel
-        Write("processed_data_title.obj", df_Title)
+        self.Write("processed_data_title.obj", df_Title)
 
 
         Inverted_Index = self.Vocabulary(df)
         Inverted_Index = self.InvertedIndex(Inverted_Index, df)
         # Storing inverted index as pickle
-        Write("inverted_index.obj", Inverted_Index)
+        self.Write("inverted_index.obj", Inverted_Index)
 
         Inverted_Index_Title = self.Vocabulary(df_Title)
         Inverted_Index_Title = self.InvertedIndex(Inverted_Index_Title, df_Title)
         # Storing inverted index of Title as pickle
-        Write("inverted_index_title.obj", Inverted_Index_Title)       
+        self.Write("inverted_index_title.obj", Inverted_Index_Title)       
 
 Data = ProcessData()
 Data.main()
