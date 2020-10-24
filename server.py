@@ -14,18 +14,25 @@ app.config["DEBUG"]= True
 
 @app.route("/")
 def index():
+    '''
+    Renders the starting query page.
+    '''
     return render_template("index.html",docs=[]);   
 
-''' API for query'''
+
 @app.route('/search' , methods=['POST'])
 def search():
+    ''' 
+    Function to be called after query is inserted to return the results.
+    Data structure used includes dictionary and lists.
+    Renders the final ranked documents.
+    '''
+    print("Time required for querying")
+    start_time = time.time()
     ranks= query_processing(request.form['query'])
-
     file = open("movie_data.obj",'rb')
     df = pickle.load(file)
     file.close()
-    print("hi")
-    start_time = time.time()
     docs=[]
     for i in range(0,10) :
         docs+=[df.iloc[ranks[i][1]].to_dict()]
