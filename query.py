@@ -12,13 +12,23 @@ from collections import defaultdict
 import heapq
 
 def load(doc):
+    ''' 
+    Function to load a pickle file 
+    '''
     file = open(doc,'rb')
     df = pickle.load(file)
     file.close()
     return df
 
 def query_processing(query):
-
+    ''' 
+    Function to calculate ranking of documents.
+    Data structure used includes Lists, Heaps, Dictionary, and Dataframes.
+    Preprocessing the query in a way similar to the documents by converting into lower case, tokenizing and stemming.
+    Calculating the term frequency for query and calculating it's tf-idf.
+    Calculating the cosine similarity between the documents and query and ranking the same using a heap.
+    takes query as parameter and returns a list of top 10 highest ranked documents.
+    '''
     no_of_doc = 34886+1 # Actual number of documents + 1
 
     #all alphabets to lower case
@@ -46,6 +56,7 @@ def query_processing(query):
     for token in df :
         query_freq[token] +=1
 
+    #calling helper functions to calculate tf-idf for query with documents and title as corpus
     q_ls, q_tf_idf = helper("inverted_index.obj", "processed_data.obj", "Length", no_of_doc, query_length, query_freq)
     q_ls_title, q_tf_idf_title = helper("inverted_index_title.obj", "processed_data_title.obj", "TitleLength", no_of_doc, query_length, query_freq)
 
@@ -55,7 +66,7 @@ def query_processing(query):
 
     q_ls += q_ls_title
     q_ls = np.array(q_ls)
-    norm_query= np.sqrt(np.sum(q_ls*q_ls))
+    norm_query= np.sqrt(np.sum(q_ls*q_ls))#mod for query
 
     rank_heap=[]
     for doc in range(0,no_of_doc-1) :
@@ -71,7 +82,7 @@ def query_processing(query):
                 val+=(value * q_tf_idf_title[term])
             d_ls+=[value]
         d_ls = np.array(d_ls)
-        norm_doc = np.sqrt(np.sum(d_ls*d_ls))
+        norm_doc = np.sqrt(np.sum(d_ls*d_ls)) #mod value for doc
         cosine_sim = val/(norm_doc*norm_query + epsilon)
         heapq.heappush(rank_heap, (cosine_sim, doc))
     req_doc= heapq.nlargest(10, rank_heap)
@@ -82,8 +93,13 @@ def query_processing(query):
 
 
 def helper(inverted_index, processed_data, length, no_of_doc, query_length, query_freq):
+    '''
+    Function to calculate tf idf for query.
+    Data structures used includes List, Dictionary and Dataframes.
+    Calculates BM25 tf-idf for query in a way similar to document.
+    Takes the corpus parameters and returns tf-idf values.
+    '''
     #tf-idf for query
-
     ii_df = load(inverted_index)
 
     ii_df= ii_df.to_dict()
