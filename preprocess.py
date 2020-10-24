@@ -16,13 +16,17 @@ class ProcessData:
     def __init__(self):
         """
         This Class is used to process the Dataset, followed by Normalization and Tokenization.
-        The goal is to create an inverted index and store it in csv format
+        The goal is to create an indexing list and store it in a pickle file.
         """
         self.tokenizer_w = WhitespaceTokenizer()
         self.stop = stopwords.words('english')
         self.ps = PorterStemmer()
         
     def read(self):
+        '''
+        Reads the dataset which is in csv format and stores it as a dataframe in df.
+        Returns the dataframe df.
+        '''
         df = pd.read_csv('wiki_movie_plots_deduped.csv')
         filehandler = open("movie_plot.obj","wb")
         pickle.dump(df,filehandler)
@@ -30,6 +34,10 @@ class ProcessData:
         return df
     
     def LowerCase(self, df):
+        '''
+        Converts the text to lower case and replaces NA with ''.
+        Takes parameters as the dataframe and returns the processed dataframe 'df'
+        '''
         
         print("Time required for Preprocessing and Tokenizing")
         self.start_time = time.time()
@@ -46,7 +54,10 @@ class ProcessData:
         return df
         
     def preprocess(self, text):
-        '''Removes punctuations and escape sequences'''
+        '''
+        Removes punctuations and escape sequences.
+        Takes the text to be modified as a parameter and returns the modified text.
+        '''
         
         text = text.replace("\n"," ").replace("\r"," ")
         text = text.replace("'s"," ")
@@ -56,13 +67,19 @@ class ProcessData:
         return text
         
     def tokenizeHelper(self, text):
-        '''Calls the nltk WhiteSpaceTokenizer to tokenize'''
+        '''
+        Calls the nltk WhiteSpaceTokenizer to tokenize.
+        Takes parameter as the text and returns the tokenized text.
+        '''
         
         text = self.preprocess(text)
         return self.tokenizer_w.tokenize(text)
 
     def Tokenizer(self, df):
-        '''Adds Columns to the dataframe containing the tokens'''
+        '''
+        Adds Columns to the dataframe containing the tokens.
+        Takes parameter as the dataframe and returns the dataframe with columns containing the tokens.
+        '''
         
         df['TokensPlot'] = df['Plot'].apply(self.tokenizeHelper)
         df['TokensTitle'] = df['Title'].apply(self.tokenizeHelper)
@@ -79,7 +96,10 @@ class ProcessData:
         return df
     
     def RemoveStopWords(self, df):
-        '''This Function removes the stopwords from the Tokens Column in the DataFrame'''
+        '''
+        This Function removes the stopwords from the Tokens Column in the DataFrame.
+        Takes the dataframe as a parameter. The changed dataframe is returned.
+        '''
         
         print("Time required to Remove Stop Words")
         self.start_time = time.time()
@@ -88,7 +108,12 @@ class ProcessData:
         return df
 
     def Stemmer(self, df, x):
-        '''This Function uses Porter's Stemmer for Stemming'''
+        '''
+        This Function uses Porter's Stemmer for Stemming.
+        Takes the dataframe and the column name as parameters.
+        Stemming is done on the column name x.
+        Function returns the dataframe 'df'.
+        '''
         
         print("Time required for Stemming")
         self.start_time = time.time()
@@ -97,7 +122,12 @@ class ProcessData:
         return df
 
     def BagOfWords(self, uniqueWords, tokens):
-        '''Creates a Dictionary with Keys as words and Values as the word-frequency in the document'''
+        '''
+        Creates a Dictionary with Keys as words and Values as the word-frequency in the document.
+        Function parameter : the dataframe column 'Unique_Words' (which stores the unique words per document).
+                           : the dataframe column 'Tokens' (which stores the tokens per document).
+        Function returns a dictionary called numOfWords.
+        '''
         
         unique = tuple(uniqueWords)
         numOfWords = dict.fromkeys(unique, 0)
@@ -106,7 +136,12 @@ class ProcessData:
         return numOfWords
 
     def TermFrequency(self, df_tokenized):
-        '''Calculates the term frequency of each word document-wise'''
+        '''
+        Calculates the term frequency of each word document-wise.
+        Function takes the dataframe as parameters and returns a dataframe with extra columns.
+        'Unique _Words' column stores unique words per document by using set.
+        'Frequency' column stores the frequency of each word per document(i.e term frequency).
+        '''
         
         print("Time required to create the Term Frequency")
         self.start_time = time.time()
@@ -117,7 +152,11 @@ class ProcessData:
         return df_tokenized
     
     def Vocabulary(self, df_tokenized):
-        '''Creates Vocabulary for all the documents. i.e Stores all the unique tokens'''
+        '''
+        Creates Vocabulary for all the documents. i.e Stores all the unique tokens.
+        Takes dataframe as a parameter and returns the unique words in the entire dataset(stored as Inverted_Index).
+        Uses a set to calculate unique words for the entire dataset.
+        '''
         
         print("Time required to create the Inverted Index")
         self.start_time = time.time()
@@ -131,7 +170,10 @@ class ProcessData:
         return Inverted_Index
     
     def InvertedIndex(self, Inverted_Index, df_tokenized):
-        '''Adds The posting list to the Inverted Index DataFrame'''
+        '''
+        Adds The posting list to the Inverted Index DataFrame.
+        Takes the indexing list and the dataframe as parameters and returns the indexing list.
+        '''
         
         inverted_index_dict = {}
         for i in range (0, 34886):
@@ -146,6 +188,15 @@ class ProcessData:
         Inverted_Index.columns =['PostingList']
         print("--- %s seconds ---" % (time.time() - self.start_time))
         return Inverted_Index
+
+    def Write(file, df):
+        '''
+        Stores the dataframes as pickle files.
+        Takes filename and dataframe as parameter.
+        '''
+        filehandler = open(file,"wb")
+        pickle.dump(df1,filehandler)
+        filehandler.close()
     
     def main(self):
         df = self.read()
@@ -154,58 +205,27 @@ class ProcessData:
         df = self.RemoveStopWords(df)
         df = self.Stemmer(df, 'Tokens')
         df = self.TermFrequency(df)
-        # print(df)
+        # Stores only the required columns from the processed dataframe.
         df1 = df[['Length' , 'Frequency']]
-
+        # Storing inverted processed data as pickle
+        Write("processed_data.obj", df1)
         
         df_Title = df[['TokensTitle', 'TitleLength']]
         df_Title = self.Stemmer(df_Title, 'TokensTitle')
         df_Title = self.TermFrequency(df_Title)
+        # Storing inverted processed data as pickel
+        Write("processed_data_title.obj", df_Title)
 
-        # storing inveted processed data as pickel
-        filehandler = open("processed_data.obj","wb")
-        pickle.dump(df1,filehandler)
-        filehandler.close()
-
-        # storing inveted processed data as pickel
-        filehandler = open("processed_data_title.obj","wb")
-        pickle.dump(df_Title,filehandler)
-        filehandler.close()
-
-        # df.to_csv(r'Processed_Data.csv')
 
         Inverted_Index = self.Vocabulary(df)
         Inverted_Index = self.InvertedIndex(Inverted_Index, df)
+        # Storing inverted index as pickle
+        Write("inverted_index.obj", Inverted_Index)
 
         Inverted_Index_Title = self.Vocabulary(df_Title)
         Inverted_Index_Title = self.InvertedIndex(Inverted_Index_Title, df_Title)
-        
-        #storing inverted index as pickel
-        filehandler = open("inverted_index.obj","wb")
-        pickle.dump(Inverted_Index,filehandler)
-        filehandler.close()
-
-        #storing inverted index of Title as pickel
-        filehandler = open("inverted_index_title.obj","wb")
-        pickle.dump(Inverted_Index_Title,filehandler)
-        filehandler.close()
-
-        file = open("processed_data.obj",'rb')
-        ii_df = pickle.load(file)
-        file.close()
-        # print(ii_df)
-
-        file = open("processed_data_title.obj",'rb')
-        ii_df1 = pickle.load(file)
-        file.close()
-        # print(ii_df1)
-        # Inverted_Index.to_csv(r'Inverted_Index.csv')
-
-        # df= pd.read_csv('wiki_movie_plots_deduped.csv')
-        # filehandler = open("movie_data.obj","wb")
-        # pickle.dump(df,filehandler)
-        # filehandler.close()
-        
+        # Storing inverted index of Title as pickle
+        Write("inverted_index_title.obj", Inverted_Index_Title)       
 
 Data = ProcessData()
 Data.main()
