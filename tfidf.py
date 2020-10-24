@@ -17,13 +17,13 @@ def tf_idf_preprocess(processed_data, inverted_index, length):
     ''' 
     Function to create tf-idf for all the documents. 
     Data structures used includes Dictionary and Dataframes. 
-    Loading the Indexing list and Term frequencies and calculates the BM25 tf-idf score for all the terms in a given document.
+    Loads the Indexing list and Term frequencies and calculates the BM25 tf-idf score for all the terms in a given document.
     Final tf-idf scores are getting stored in a pickle file.
     BM 25 tf-idf =  idf* tf*((k+1) )/(k*(1- b + b*((length of document)/(avg length of document))) * 100
     where k and b are fixed parameters and tf, idf are term frequency and inverse document frequency .
     tf = no of times term occuring a document/total length of document
     idf = log(no of documents/ no of documents containing that term)
-    Performing the same procedure for the titles of the documents, calculating the BM25 tf-idf score for each term in the title as well. 
+    Perfomes the same procedure for the titles of the documents, calculating the BM25 tf-idf score for each term in the title as well. 
     Returns tf-idf dictionary
     '''
     print("Time required to create tf-idf for corpus")

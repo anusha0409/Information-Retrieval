@@ -25,9 +25,9 @@ def query_processing(query):
     Function to calculate ranking of documents.
     Data structure used includes Lists, Heaps, Dictionary, and Dataframes.
     Preprocessing the query in a way similar to the documents by converting into lower case, tokenizing and stemming.
-    Calculating the term frequency for query and calculating it's tf-idf.
-    Calculating the cosine similarity between the documents and query and ranking the same using a heap.
-    takes query as parameter and returns a list of top 10 highest ranked documents.
+    Calculates the term frequency for query and calculating it's tf-idf.
+    Calculates the cosine similarity between the documents and query and ranking the same using a heap.
+    Takes query as parameter and returns a list of top 10 highest ranked documents.
     '''
     no_of_doc = 34886+1 # Actual number of documents + 1
 
