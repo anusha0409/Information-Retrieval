@@ -26,6 +26,8 @@ def tf_idf_preprocess(processed_data, inverted_index, length):
     Performing the same procedure for the titles of the documents, calculating the BM25 tf-idf score for each term in the title as well. 
     Returns tf-idf dictionary
     '''
+    print("Time required to create tf-idf for corpus")
+    start_time = time.time()
     no_of_doc = 34886
 
     # loading term frequencies
@@ -48,7 +50,6 @@ def tf_idf_preprocess(processed_data, inverted_index, length):
     b=0.75 # parameter for BM25
     
     tf_idf_dict={}
-    start_time = time.time()
 
     #calculating tf-idf
     for doc in range(0,no_of_doc):
