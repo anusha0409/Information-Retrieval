@@ -30,37 +30,36 @@ def tf_idf_preprocess(processed_data, inverted_index, length):
     start_time = time.time()
     no_of_doc = 34886
 
-    # loading term frequencies
+    # Loading term frequencies
     df = load(processed_data)
 
     d_df = df.to_dict()
     d_df =d_df[length]
     
 
-    # average length of all documents
+    # Average length of all documents
     avg_length= df[length].mean() 
     
-    #loading indexing list
+    # Loading indexing list
     ii_df = load(inverted_index)# indexing list
 
     ii_df= ii_df.to_dict()
     ii_df=ii_df['PostingList'] 
 
-    k=1.75 # parameter for BM25
-    b=0.75 # parameter for BM25
+    k=1.75 # Parameter for BM25
+    b=0.75 # Parameter for BM25
     
     tf_idf_dict={}
 
-    #calculating tf-idf
+    # Calculating tf-idf
     for doc in range(0,no_of_doc):
         doc_dict={}
         for key,value in df['Frequency'][doc].items():
             if key=='nan' or key=='null':
-             continue;
+             continue
             tf = (value/d_df[doc]) 
             idf = np.log(no_of_doc/(ii_df[key]))
-            # doc_dict[key]=tf*idf
-            doc_dict[key] = idf*( tf*(k+1) )/(k*(1- b + b*(df[length][doc]/avg_length))) * 100
+            doc_dict[key] = idf*( tf*(k+1) )/(tf + k*(1- b + b*(df[length][doc]/avg_length))) * 100
         tf_idf_dict[doc]=doc_dict
 
     print("--- %s seconds ---" % (time.time() - start_time))
@@ -77,7 +76,7 @@ def main():
     pickle.dump(tf_idf_title_dict,filehandler)
     filehandler.close()
 
-
+main()
 
 
 

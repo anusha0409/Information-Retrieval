@@ -1,6 +1,5 @@
 import os
 from flask import Flask, render_template,url_for
-from flask_cors import CORS
 from flask import request
 from query import query_processing
 import pandas as pd
@@ -8,7 +7,6 @@ import time
 import pickle
 
 app = Flask(__name__)
-CORS(app)
 app.config["DEBUG"]= True
 
 
