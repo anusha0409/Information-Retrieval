@@ -1,0 +1,153 @@
+Help on module preprocess:
+
+NAME
+    preprocess - # Importing Libraries
+
+CLASSES
+    builtins.object
+        ProcessData
+    
+    class ProcessData(builtins.object)
+     |  Methods defined here:
+     |  
+     |  BagOfWords(self, uniqueWords, tokens)
+     |      Creates a Dictionary with Keys as words and Values as the word-frequency in the document.
+     |      Function parameter : the dataframe column 'Unique_Words' (which stores the unique words per document).
+     |                         : the dataframe column 'Tokens' (which stores the tokens per document).
+     |      Function returns a dictionary called numOfWords.
+     |  
+     |  InvertedIndex(self, Inverted_Index, df_tokenized)
+     |      Adds The posting list to the Inverted Index DataFrame.
+     |      Takes the indexing list and the dataframe as parameters and returns the indexing list.
+     |  
+     |  LowerCase(self, df)
+     |      Converts the text to lower case and replaces NA with ''.
+     |      Takes parameters as the dataframe and returns the processed dataframe 'df'
+     |  
+     |  RemoveStopWords(self, df)
+     |      This Function removes the stopwords from the Tokens Column in the DataFrame.
+     |      Takes the dataframe as a parameter. The changed dataframe is returned.
+     |  
+     |  Stemmer(self, df, x)
+     |      This Function uses Porter's Stemmer for Stemming.
+     |      Takes the dataframe and the column name as parameters.
+     |      Stemming is done on the column name x.
+     |      Function returns the dataframe 'df'.
+     |  
+     |  TermFrequency(self, df_tokenized)
+     |      Calculates the term frequency of each word document-wise.
+     |      Function takes the dataframe as parameters and returns a dataframe with extra columns.
+     |      'Unique _Words' column stores unique words per document by using set.
+     |      'Frequency' column stores the frequency of each word per document(i.e term frequency).
+     |  
+     |  Tokenizer(self, df)
+     |      Adds Columns to the dataframe containing the tokens.
+     |      Takes parameter as the dataframe and returns the dataframe with columns containing the tokens.
+     |  
+     |  Vocabulary(self, df_tokenized)
+     |      Creates Vocabulary for all the documents. i.e Stores all the unique tokens.
+     |      Takes dataframe as a parameter and returns the unique words in the entire dataset(stored as Inverted_Index).
+     |      Uses a set to calculate unique words for the entire dataset.
+     |  
+     |  Write(self, file, df)
+     |      Stores the dataframes as pickle files.
+     |      Takes filename and dataframe as parameter.
+     |  
+     |  __init__(self)
+     |      This Class is used to process the Dataset, followed by Normalization and Tokenization.
+     |      The goal is to create an indexing list and store it in a pickle file.
+     |  
+     |  main(self)
+     |  
+     |  preprocess(self, text)
+     |      Removes punctuations and escape sequences.
+     |      Takes the text to be modified as a parameter and returns the modified text.
+     |  
+     |  read(self)
+     |      Reads the dataset which is in csv format and stores it as a dataframe in df.
+     |      Returns the dataframe df.
+     |  
+     |  tokenizeHelper(self, text)
+     |      Calls the nltk WhiteSpaceTokenizer to tokenize.
+     |      Takes parameter as the text and returns the tokenized text.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+DATA
+    Data = <preprocess.ProcessData object>
+
+Help on module query:
+
+NAME
+    query
+
+FUNCTIONS
+    helper(inverted_index, processed_data, length, no_of_doc, query_length, query_freq)
+        Function to calculate tf idf for query.
+        Data structures used includes List, Dictionary and Dataframes.
+        Calculates BM25 tf-idf for query in a way similar to document.
+        Takes the corpus parameters and returns tf-idf values.
+    
+    load(doc)
+        Function to load a pickle file
+    
+    query_processing(query)
+        Function to calculate ranking of documents.
+        Data structure used includes Lists, Heaps, Dictionary, and Dataframes.
+        Preprocessing the query in a way similar to the documents by converting into lower case, tokenizing and stemming.
+        Calculates the term frequency for query and calculating it's tf-idf.
+        Calculates the cosine similarity between the documents and query and ranking the same using a heap.
+        Takes query as parameter and returns a list of top 10 highest ranked documents.
+
+DATA
+    stopwords = <WordListCorpusReader in '.../corpora/stopwords'
+    
+Help on module server:
+
+NAME
+    server
+
+FUNCTIONS
+    index()
+        Renders the starting query page.
+    
+    search()
+        Function to be called after query is inserted to return the results.
+        Data structure used includes dictionary and lists.
+        Renders the final ranked documents.
+
+DATA
+    app = <Flask 'server'>
+    request = <LocalProxy unbound>
+    
+Help on module tfidf:
+
+NAME
+    tfidf
+
+FUNCTIONS
+    load(doc)
+        Function to load a pickle file .
+    
+    main()
+    
+    tf_idf_preprocess(processed_data, inverted_index, length)
+        Function to create tf-idf for all the documents. 
+        Data structures used includes Dictionary and Dataframes. 
+        Loads the Indexing list and Term frequencies and calculates the BM25 tf-idf score for all the terms in a given document.
+        Final tf-idf scores are getting stored in a pickle file.
+        BM 25 tf-idf =  idf* tf*((k+1) )/(k*(1- b + b*((length of document)/(avg length of document))) * 100
+        where k and b are fixed parameters and tf, idf are term frequency and inverse document frequency .
+        tf = no of times term occuring a document/total length of document
+        idf = log(no of documents/ no of documents containing that term)
+        Perfomes the same procedure for the titles of the documents, calculating the BM25 tf-idf score for each term in the title as well. 
+        Returns tf-idf dictionary
+
+
