@@ -13,6 +13,8 @@ You are supposed to return top 10 relevant documents as the output.
 
 Dataset used - [Kaggle-movie-plots](https://www.kaggle.com/jrobischon/wikipedia-movie-plots)
 
+Have a look at the file [Design Architecture](https://github.com/anusha0409/Information-Retrieval/blob/main/Design%20Architecture.pdf). It includes the concepts used along with the modified implementation of the TF-IDF ranking.
+
 Project By:
 - **Kriti Jethlia**: Email- <f20180223@hyderabad.bits-pilani.ac.in>
 - **Jui Pradhan**: Email- <f20180984@hyderabad.bits-pilani.ac.in>
